@@ -75,7 +75,7 @@ function deletetabledetails(dishid) {
                   break;
                 }
               }
-            display();
+            display()
         })
         .catch(err => {
             console.log("Something went wrong:", err);
