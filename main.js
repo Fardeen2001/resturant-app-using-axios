@@ -1,109 +1,84 @@
-// Encapsulate the code within an object or module
-const app = {
-    form: document.getElementById("form"),
-    table1: document.getElementById("table1"),
-    table2: document.getElementById("table2"),
-    table3: document.getElementById("table3"),
-    tableDetails: [],
-  
-    init() {
-      this.fetchTableDetails();
-      this.form.addEventListener('submit', this.addTableDetails.bind(this));
-    },
-  
-    fetchTableDetails() {
-      axios.get("https://crudcrud.com/api/5d7518528c624603968165efac7317a8")
-        .then(response => {
-          this.tableDetails = response.data;
-          this.display();
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-  
-    display() {
-      this.table1.innerHTML = '';
-      this.table2.innerHTML = '';
-      this.table3.innerHTML = '';
-  
-      this.tableDetails.forEach(user => {
-        let li = document.createElement('li');
-        li.className = "list-group-item";
-  
-        switch (user.dishtable) {
-          case "Table 1":
-            li.className += " table1";
-            break;
-          case "Table 2":
-            li.className += " table2";
-            break;
-          case "Table 3":
-            li.className += " table3";
-            break;
-          default:
-            break;
+let form = document.getElementById("form")
+let table1 = document.getElementById("table1")
+let table2 = document.getElementById("table2")
+let table3 = document.getElementById("table3")
+
+let Details=[];
+
+form.addEventListener("submit",addtabledetails)
+axios.get("https://crudcrud.com/api/57b361f3d28448d795116a63fbd1a16d/orders")
+    .then(response => {
+        Details = response.data;
+        display();
+    })
+    .catch(err => {
+        console.log("Something went wrong:", err);
+        document.body.innerHTML="<h4>Something went wrong</h4>"
+    });
+
+function display(){
+    table1.innerHTML=""
+    table2.innerHTML=""
+    table3.innerHTML=""
+    Details.forEach(detail=>{
+        if(detail.dishtable=="Table 1"){
+            let li = document.createElement("li");
+            li.className="list-group-item";
+            li.innerHTML=`${detail.dishname}-${detail.dishprice}-${detail.dishtable}<button type="button" class="btn btn-secondary btn-sm btndelete float-end" onclick="deletetabledetails('${detail._id}')">Delete</button>`
+            table1.appendChild(li)
         }
-  
-        li.innerHTML = `${user.dishname}-${user.dishprice}-${user.dishtable}<button type="button" class="btn btn-secondary btn-sm btndelete float-end" id="del" onclick="app.deleteUser('${user._id}')">Delete</button>`;
-        this.getTableElement(user.dishtable).appendChild(li);
-      });
-    },
-  
-    addTableDetails(e) {
-      e.preventDefault();
-      let dishname = document.getElementById("validationDefault01").value;
-      let dishprice = document.getElementById("validationDefault02").value;
-      let dishtable = document.getElementById("validationDefault03").value;
-  
-      if (!dishname || !dishprice || !dishtable) {
-        alert("Please fill in all fields.");
-        return;
-      }
-  
-      let tableobj = {
+        else  if(detail.dishtable=="Table 2"){
+            let li = document.createElement("li");
+            li.className="list-group-item";
+            li.innerHTML=`${detail.dishname}-${detail.dishprice}-${detail.dishtable}<button type="button" class="btn btn-secondary btn-sm btndelete float-end" onclick="deletetabledetails('${detail._id}')">Delete</button>`
+            table2.appendChild(li)
+        }
+        else{
+            let li = document.createElement("li");
+            li.className="list-group-item";
+            li.innerHTML=`${detail.dishname}-${detail.dishprice}-${detail.dishtable}<button type="button" class="btn btn-secondary btn-sm btndelete float-end" onclick="deletetabledetails('${detail._id}')">Delete</button>`
+            table3.appendChild(li)
+        }
+    })
+}
+
+function addtabledetails(e){
+    e.preventDefault();
+    let dishname = document.getElementById("validationDefault01").value;
+    let dishprice = document.getElementById("validationDefault02").value;
+    let dishtable = document.getElementById("validationDefault03").value;
+
+    let tableDetails = {
         "dishname": dishname,
         "dishprice": dishprice,
         "dishtable": dishtable
-      };
-  
-      axios.post(`https://crudcrud.com/api/5d7518528c624603968165efac7317a8/${dishtable}`, tableobj)
+    };
+    axios.post("https://crudcrud.com/api/57b361f3d28448d795116a63fbd1a16d/orders", tableDetails)
+    .then(response => {
+        tableDetails._id = response.data._id;
+        Details.push(tableDetails);
+        display();
+        form.reset();
+    })
+    .catch(err => {
+        console.log("Something went wrong:", err);
+        document.body.innerHTML="<h4>Something went wrong</h4>"
+    });
+
+}
+function deletetabledetails(dishid) {
+    axios.delete(`https://crudcrud.com/api/57b361f3d28448d795116a63fbd1a16d/orders/${dishid}`)
         .then(response => {
-          tableobj._id = response.data._id;
-          this.tableDetails.push(tableobj);
-          this.display();
-          this.form.reset();
+            for (let i = 0; i < Details.length; i++) {
+                if (Details[i]._id === dishid) {
+                  Details.splice(i, 1);
+                  break;
+                }
+              }
+            display();
         })
-        .catch(error => {
-          console.log(error);
+        .catch(err => {
+            console.log("Something went wrong:", err);
+            document.body.innerHTML="<h4>Something went wrong</h4>"
         });
-    },
-  
-    deleteUser(userId) {
-      axios.delete(`https://crudcrud.com/api/5d7518528c624603968165efac7317a8/${userId}`)
-        .then(response => {
-          this.tableDetails = this.tableDetails.filter(user => user._id !== userId);
-          this.display();
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-  
-    getTableElement(tableName) {
-      switch (tableName) {
-        case "Table 1":
-          return this.table1;
-        case "Table 2":
-          return this.table2;
-        case "Table 3":
-          return this.table3;
-        default:
-          return null;
-      }
-    }
-  };
-  
-  // Initialize the app
-  app.init();
-  
+}
