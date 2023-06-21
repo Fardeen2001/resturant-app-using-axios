@@ -6,15 +6,19 @@ let table3 = document.getElementById("table3")
 let Details=[];
 
 form.addEventListener("submit",addtabledetails)
-axios.get("https://crudcrud.com/api/3f164e0a2d174628943a77d04ca99f75/orders")
-    .then(response => {
+async function detail(){
+    try{
+        let response = await axios.get("https://crudcrud.com/api/3f164e0a2d174628943a77d04ca99f75/orders")
         Details = response.data;
         display();
-    })
-    .catch(err => {
+    }
+
+    catch(err)  {
         console.log("Something went wrong:", err);
         document.body.innerHTML="<h4>Something went wrong</h4>"
-    });
+    };
+}
+
 
 function display(){
     table1.innerHTML=""
@@ -42,7 +46,7 @@ function display(){
     })
 }
 
-function addtabledetails(e){
+async  function addtabledetails(e){
     e.preventDefault();
     let dishname = document.getElementById("validationDefault01").value;
     let dishprice = document.getElementById("validationDefault02").value;
@@ -53,22 +57,21 @@ function addtabledetails(e){
         "dishprice": dishprice,
         "dishtable": dishtable
     };
-    axios.post("https://crudcrud.com/api/3f164e0a2d174628943a77d04ca99f75/orders", tableDetails)
-    .then(response => {
+    try{
+    let response = await axios.post("https://crudcrud.com/api/3f164e0a2d174628943a77d04ca99f75/orders", tableDetails);
         tableDetails._id = response.data._id;
         Details.push(tableDetails);
         display();
         form.reset();
-    })
-    .catch(err => {
+    }catch(err){
         console.log("Something went wrong:", err);
         document.body.innerHTML="<h4>Something went wrong</h4>"
-    });
+    };
 
 }
-function deletetabledetails(dishid) {
-    axios.delete(`https://crudcrud.com/api/3f164e0a2d174628943a77d04ca99f75/orders/${dishid}`)
-        .then(response => {
+async function deletetabledetails(dishid) {
+    try{
+    await axios.delete(`https://crudcrud.com/api/3f164e0a2d174628943a77d04ca99f75/orders/${dishid}`)
             for (let i = 0; i < Details.length; i++) {
                 if (Details[i]._id === dishid) {
                   Details.splice(i, 1);
@@ -76,9 +79,10 @@ function deletetabledetails(dishid) {
                 }
               }
             display()
-        })
-        .catch(err => {
+        }
+        catch(err){
             console.log("Something went wrong:", err);
             document.body.innerHTML="<h4>Something went wrong</h4>"
-        });
+        };
 }
+detail()
