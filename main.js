@@ -6,7 +6,7 @@ let table3 = document.getElementById("table3")
 let Details=[];
 
 form.addEventListener("submit",addtabledetails)
-axios.get("https://crudcrud.com/api/57b361f3d28448d795116a63fbd1a16d/orders")
+axios.get("https://crudcrud.com/api/3f164e0a2d174628943a77d04ca99f75/orders")
     .then(response => {
         Details = response.data;
         display();
@@ -24,19 +24,19 @@ function display(){
         if(detail.dishtable=="Table 1"){
             let li = document.createElement("li");
             li.className="list-group-item";
-            li.innerHTML=`${detail.dishname}-${detail.dishprice}-${detail.dishtable}<button type="button" class="btn btn-secondary btn-sm btndelete float-end" onclick="deletetabledetails('${detail._id}')">Delete</button>`
+            li.innerHTML=`${detail.dishname}-${detail.dishprice}-${detail.dishtable}<button type="button" class="btn btn-danger btn-sm btndelete float-end" onclick="deletetabledetails('${detail._id}')">Delete</button>`
             table1.appendChild(li)
         }
         else  if(detail.dishtable=="Table 2"){
             let li = document.createElement("li");
             li.className="list-group-item";
-            li.innerHTML=`${detail.dishname}-${detail.dishprice}-${detail.dishtable}<button type="button" class="btn btn-secondary btn-sm btndelete float-end" onclick="deletetabledetails('${detail._id}')">Delete</button>`
+            li.innerHTML=`${detail.dishname}-${detail.dishprice}-${detail.dishtable}<button type="button" class="btn btn-danger btn-sm btndelete float-end" onclick="deletetabledetails('${detail._id}')">Delete</button>`
             table2.appendChild(li)
         }
         else{
             let li = document.createElement("li");
             li.className="list-group-item";
-            li.innerHTML=`${detail.dishname}-${detail.dishprice}-${detail.dishtable}<button type="button" class="btn btn-secondary btn-sm btndelete float-end" onclick="deletetabledetails('${detail._id}')">Delete</button>`
+            li.innerHTML=`${detail.dishname}-${detail.dishprice}-${detail.dishtable}<button type="button" class="btn btn-danger btn-sm btndelete float-end" onclick="deletetabledetails('${detail._id}')">Delete</button>`
             table3.appendChild(li)
         }
     })
@@ -53,7 +53,7 @@ function addtabledetails(e){
         "dishprice": dishprice,
         "dishtable": dishtable
     };
-    axios.post("https://crudcrud.com/api/57b361f3d28448d795116a63fbd1a16d/orders", tableDetails)
+    axios.post("https://crudcrud.com/api/3f164e0a2d174628943a77d04ca99f75/orders", tableDetails)
     .then(response => {
         tableDetails._id = response.data._id;
         Details.push(tableDetails);
@@ -67,7 +67,7 @@ function addtabledetails(e){
 
 }
 function deletetabledetails(dishid) {
-    axios.delete(`https://crudcrud.com/api/57b361f3d28448d795116a63fbd1a16d/orders/${dishid}`)
+    axios.delete(`https://crudcrud.com/api/3f164e0a2d174628943a77d04ca99f75/orders/${dishid}`)
         .then(response => {
             for (let i = 0; i < Details.length; i++) {
                 if (Details[i]._id === dishid) {
